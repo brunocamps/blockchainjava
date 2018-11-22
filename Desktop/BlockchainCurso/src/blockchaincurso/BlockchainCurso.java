@@ -14,13 +14,37 @@ package blockchaincurso;
 
 import java.util.ArrayList;
 import com.google.gson.GsonBuilder;
+import java.security.Security;
+import java.util.Base64;
+import java.util.HashMap;
+
 
 public class BlockchainCurso {
     
-    public static ArrayList<Bloco> blockchain = new ArrayList<Bloco>(); 
-    public static int dificuldade = 5;
-
+public static ArrayList<Bloco> blockchain = new ArrayList<Bloco>();
+	public static HashMap<String,TransactionOutputs> UTXOs = new HashMap<String,TransactionOutputs>(); //list of all unspent transactions. 
+	public static int dificuldade = 5;
+	public static Wallet walletA;
+	public static Wallet walletB;
+        
     public static void main(String[] args) {
+        
+        //4a parte
+        //Setup Bouncey castle as a Security Provider
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); 
+		//Create the new wallets
+		walletA = new Wallet();
+		walletB = new Wallet();
+		//Test public and private keys
+		System.out.println("Private and public keys:");
+		System.out.println(StringUtil.getStringFromKey(walletA.privateKey));
+		System.out.println(StringUtil.getStringFromKey(walletA.publicKey));
+		//Create a test transaction from WalletA to walletB 
+		Transaction transaction = new Transaction(walletA.publicKey, walletB.publicKey, 5, null);
+		transaction.generateSignature(walletA.privateKey);
+		//Verify the signature works and verify it from the public key
+		System.out.println("Is signature verified");
+		System.out.println(transaction.verifiySignature());
         
         //1a parte
         //testar as classes Bloco e StringUtil
@@ -46,23 +70,25 @@ public class BlockchainCurso {
 //		String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);		
 //                System.out.println(blockchainJson);
        //3a parte
-       blockchain.add(new Bloco("Primeiro bloco", "0"));
-		System.out.println("Minerando bloco 1 ");
-		blockchain.get(0).minerarBloco(dificuldade);
-		
-		blockchain.add(new Bloco("Segundo bloco",blockchain.get(blockchain.size()-1).hash));
-		System.out.println("Minerando bloco 2 ");
-		blockchain.get(1).minerarBloco(dificuldade);
-		
-		blockchain.add(new Bloco("Terceiro bloco",blockchain.get(blockchain.size()-1).hash));
-		System.out.println("Minerando bloco 3 ");
-		blockchain.get(2).minerarBloco(dificuldade);	
-		
-		System.out.println("\nValidade do blockchain: " + validarBlockchain());
-		
-		String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
-		System.out.println("\nA blockchain: ");
-                System.out.println(blockchainJson);
+//       blockchain.add(new Bloco("Primeiro bloco", "0"));
+//		System.out.println("Minerando bloco 1 ");
+//		blockchain.get(0).minerarBloco(dificuldade);
+//		
+//		blockchain.add(new Bloco("Segundo bloco",blockchain.get(blockchain.size()-1).hash));
+//		System.out.println("Minerando bloco 2 ");
+//		blockchain.get(1).minerarBloco(dificuldade);
+//		
+//		blockchain.add(new Bloco("Terceiro bloco",blockchain.get(blockchain.size()-1).hash));
+//		System.out.println("Minerando bloco 3 ");
+//		blockchain.get(2).minerarBloco(dificuldade);	
+//		
+//		System.out.println("\nValidade do blockchain: " + validarBlockchain());
+//		
+//		String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
+//		System.out.println("\nA blockchain: ");
+//                System.out.println(blockchainJson);
+
+    
     }
     
     //quualquer mudança nos blocos fara com que esse método retorne falso
